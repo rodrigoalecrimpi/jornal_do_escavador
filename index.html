@@ -1,29 +1,93 @@
 <!DOCTYPE html>
-<html lang="pt">
-<head> 
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Journal.py.py</title>
+    <title>Personal Journal</title>
+    <script src="https://cdn.jsdelivr.net/gh/pygame/pygame.js/pygame.js"></script>
     <style>
         body {
-            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             background-color: #000;
-            color: #fff;
         }
-        #gameContainer {
-            width: 800px;
-            height: 600px;
-            margin: 0 auto;
-            border: 2px solid #fff;
+        canvas {
+            border: 1px solid white;
         }
     </style>
 </head>
 <body>
-    <h1>Personal Journal.py</h1>
-    <div id="gameContainer">
-        <p>O jogo está carregando...</p>
-    </div>
-    <script src="pygame.js"></script> <!-- O Pygame.js, se estiver usando -->
-    <script src="seu_jogo_em_js.js"></script> <!-- O código do seu jogo convertido -->
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("gameCanvas");
+        var screenWidth = 800;
+        var screenHeight = 600;
+
+        // Inicializa o Pygame.js
+        pygame.init();
+        canvas.width = screenWidth;
+        canvas.height = screenHeight;
+        var screen = pygame.display.set_mode([screenWidth, screenHeight]);
+        var fontTitle = pygame.font.SysFont("timesnewroman", 64);
+        var fontMenu = pygame.font.SysFont("timesnewroman", 40);
+
+        var menuOptions = ["New Game", "Options", "Volume", "Credits"];
+        var selectedOption = 0;
+
+        // Função para desenhar texto na tela
+        function drawText(text, font, color, x, y) {
+            var img = font.render(text, true, color);
+            screen.blit(img, [x, y]);
+        }
+
+        // Função para renderizar o menu
+        function renderMenu() {
+            screen.fill([0, 0, 0]);  // Cor do fundo (preto)
+
+            // Desenha o título do menu
+            drawText("MENU", fontTitle, [255, 255, 255], 300, 100);
+
+            // Desenha as opções do menu
+            for (var i = 0; i < menuOptions.length; i++) {
+                var color = (i === selectedOption) ? [255, 215, 0] : [255, 255, 255];
+                drawText(menuOptions[i], fontMenu, color, 320, 200 + i * 50);
+            }
+        }
+
+        // Função de loop principal
+        function gameLoop() {
+            var running = true;
+
+            // Loop de eventos
+            for (var event of pygame.event.get()) {
+                if (event.type === pygame.QUIT) {
+                    running = false;
+                }
+
+                if (event.type === pygame.KEYDOWN) {
+                    if (event.key === pygame.K_UP) {
+                        selectedOption = (selectedOption - 1 + menuOptions.length) % menuOptions.length;
+                    } else if (event.key === pygame.K_DOWN) {
+                        selectedOption = (selectedOption + 1) % menuOptions.length;
+                    } else if (event.key === pygame.K_RETURN) {
+                        console.log("Você selecionou: " + menuOptions[selectedOption]);
+                    }
+                }
+            }
+
+            // Renderiza o menu
+            renderMenu();
+
+            // Atualiza a tela
+            pygame.display.update();
+        }
+
+        // Inicia o loop de jogo
+        setInterval(gameLoop, 1000 / 60);  // 60 FPS
+    </script>
 </body>
 </html>
